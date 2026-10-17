@@ -1,27 +1,34 @@
 import fs from 'fs';
 import {parse} from 'csv-parse';
 import {ImportGasStationResponseType} from "../../types/import-gas-station-response-type";
+import {isValidCNPJ} from "../../validators/cnpj_validator";
+import {isValidCPF} from "../../validators/cpf_validator";
+import {isValidCEP} from "../../validators/cep_validator";
+import {isValidEmail} from "../../validators/email_validator";
+import {isValidDate} from "../../validators/gas-station-import/date_validator";
+import {isValidGasStationStatus} from "../../validators/gas-station-import/gas_station_status_validator";
+import {getInvalidFuels, isValidFuelList} from "../../validators/gas-station-import/fuel_type_validator";
 
 export class ImportGasStationService {
   private readonly COLUMNS = [
-    {name: 'cnpj', required: true},
-    {name: 'nome_posto', required: true},
-    {name: 'nome_fantasia', required: true},
-    {name: 'bandeira', required: true},
-    {name: 'logradouro', required: true},
-    {name: 'numero', required: true},
-    {name: 'complemento', required: false},
-    {name: 'bairro', required: true},
-    {name: 'municipio', required: true},
-    {name: 'uf', required: true},
-    {name: 'cep', required: true},
-    {name: 'cpf_responsavel', required: true},
-    {name: 'nome_responsavel', required: true},
-    {name: 'email_responsavel', required: true},
-    {name: 'cargo_responsavel', required: true},
-    {name: 'combustiveis', required: true},
-    {name: 'status', required: true},
-    {name: 'data_inauguracao', required: true},
+    {name: 'cnpj', required: true, validate: isValidCNPJ},
+    {name: 'nome_posto', required: true, maxLength: 150},
+    {name: 'nome_fantasia', required: true, maxLength: 150},
+    {name: 'bandeira', required: true, maxLength: 150},
+    {name: 'logradouro', required: true, maxLength: 150},
+    {name: 'numero', required: true, maxLength: 150},
+    {name: 'complemento', required: false, maxLength: 150},
+    {name: 'bairro', required: true, maxLength: 150},
+    {name: 'municipio', required: true, maxLength: 150},
+    {name: 'uf', required: true, maxLength: 2},
+    {name: 'cep', required: true, validate: isValidCEP},
+    {name: 'cpf_responsavel', required: true, validate: isValidCPF},
+    {name: 'nome_responsavel', required: true, maxLength: 150},
+    {name: 'email_responsavel', required: true, validate: isValidEmail},
+    {name: 'cargo_responsavel', required: true, maxLength: 150},
+    {name: 'combustiveis', required: true, validate: isValidFuelList},
+    {name: 'status', required: true, validate: isValidGasStationStatus},
+    {name: 'data_inauguracao', required: true, validate: isValidDate},
     {name: 'numero_bicos', required: true},
     {name: 'numero_pistas', required: true},
     {name: 'observacoes', required: false},
@@ -61,17 +68,35 @@ export class ImportGasStationService {
         }
 
         const rowErrors: string[] = [];
-        for (const col of this.COLUMNS) {
+        for (const col of (this.COLUMNS as any[])) {
           const value = row[col.name];
-          if (col.required && (value === null || value === undefined || value === '')) {
+          const isEmpty = value === null || value === undefined || value === '';
+
+          if (col.required && isEmpty) {
             rowErrors.push(`coluna ${col.name} é obrigatória`);
+            continue;
+          }
+
+          if (!isEmpty) {
+            if (col.maxLength && String(value).length > col.maxLength) {
+              rowErrors.push(`coluna ${col.name} excede o limite de ${col.maxLength} caracteres`);
+            }
+
+            if (col.validate && !col.validate(value)) {
+              if (col.name === 'combustiveis') {
+                const invalidFuels = getInvalidFuels(value);
+                rowErrors.push(`coluna ${col.name} possui combustíveis inválidos: ${invalidFuels.join(', ')}`);
+              } else {
+                rowErrors.push(`coluna ${col.name} possui formato inválido`);
+              }
+            }
           }
         }
 
         if (rowErrors.length > 0) {
           totalErrors++;
           if (errors.length < MAX_ERRORS) {
-            errors.push(`linha ${rowCount + 1}: ${rowErrors.join(', ')}`);
+            errors.push(`linha ${rowCount + 1}: ${rowErrors.join('; ')}`);
           }
         } else {
           data.push(row);
@@ -90,7 +115,7 @@ export class ImportGasStationService {
         });
 
         if (totalErrors > MAX_ERRORS) {
-          errors.push(`a planilha contém mais ${totalErrors - MAX_ERRORS} erro(s) que precisa(m) ser corrigido(s). Exporte novamente após corrigir os erros listados acima.`);
+          errors.push(`a planilha contém mais ${totalErrors - MAX_ERRORS} erro(s) que precisa(m) ser corrigido(s). Importe novamente após corrigir os erros listados acima.`);
         }
 
         let success: boolean = totalErrors === 0;
