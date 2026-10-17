@@ -31,6 +31,8 @@ export class ImportGasStationService {
     const errors: string[] = [];
     const data: any[] = [];
     let rowCount = 0;
+    let totalErrors = 0;
+    const MAX_ERRORS = 50;
     let headersValidated = false;
 
     return new Promise((resolve, reject) => {
@@ -50,7 +52,8 @@ export class ImportGasStationService {
           const headers = Object.keys(row);
           const missing = this.COLUMNS.filter(col => !headers.includes(col.name));
           if (missing.length > 0) {
-            errors.push(`erro nos cabeçalhos: colunas obrigatórias ausentes: ${missing.map(m => m.name).join(', ')}`);
+            const errorMsg = `erro nos cabeçalhos: colunas obrigatórias ausentes: ${missing.map(m => m.name).join(', ')}`;
+            errors.push(errorMsg);
             parser.destroy();
             return;
           }
@@ -61,12 +64,15 @@ export class ImportGasStationService {
         for (const col of this.COLUMNS) {
           const value = row[col.name];
           if (col.required && (value === null || value === undefined || value === '')) {
-            rowErrors.push(`coluna ${col.name} vazia`);
+            rowErrors.push(`coluna ${col.name} é obrigatória`);
           }
         }
 
         if (rowErrors.length > 0) {
-          errors.push(`linha ${rowCount + 1}: ${rowErrors.join(', ')}`);
+          totalErrors++;
+          if (errors.length < MAX_ERRORS) {
+            errors.push(`linha ${rowCount + 1}: ${rowErrors.join(', ')}`);
+          }
         } else {
           data.push(row);
         }
@@ -83,7 +89,11 @@ export class ImportGasStationService {
           if (error) console.error('erro ao remover arquivo temporário:', error);
         });
 
-        let success: boolean = errors.length === 0;
+        if (totalErrors > MAX_ERRORS) {
+          errors.push(`a planilha contém mais ${totalErrors - MAX_ERRORS} erro(s) que precisa(m) ser corrigido(s). Exporte novamente após corrigir os erros listados acima.`);
+        }
+
+        let success: boolean = totalErrors === 0;
         let message: string = success ? 'planilha importada com sucesso' : 'erro ao importar planilha';
 
         resolve({
