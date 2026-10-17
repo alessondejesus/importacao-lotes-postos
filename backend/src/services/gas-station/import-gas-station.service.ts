@@ -87,7 +87,7 @@ export class ImportGasStationService {
                 const invalidFuels = getInvalidFuels(value);
                 rowErrors.push(`coluna ${col.name} possui combustíveis inválidos: ${invalidFuels.join(', ')}`);
               } else {
-                rowErrors.push(`coluna ${col.name} possui formato inválido`);
+                rowErrors.push(`coluna ${col.name} possui valor inválido: ${value}`);
               }
             }
           }
