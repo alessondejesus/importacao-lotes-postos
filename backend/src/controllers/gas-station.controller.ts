@@ -1,27 +1,29 @@
 import {Request, Response} from 'express';
 import {ImportGasStationService} from "../services/gas-station/import-gas-station.service";
+import {successResponse, errorResponse} from "../utils /api-response-util";
+import fs from 'fs/promises';
 
 const importGasStationService = new ImportGasStationService();
 
 export class GasStationController {
   async import(req: Request, res: Response): Promise<void> {
     try {
-      if (!req.file) {
-        res.status(400).json({error: 'arquivo CSV não enviado'});
+      const result = await importGasStationService.execute(req.file!.path);
+
+      if (!result.success) {
+        errorResponse(res, result.message, 422, result.errors);
         return;
       }
 
-      const result = await importGasStationService.execute(req.file.path);
-
-      if (!result.success && result.errors.length > 0) {
-        res.status(422).json(result);
-        return;
-      }
-
-      res.status(200).json(result);
+      successResponse(res, result.message);
     } catch (error) {
+      if (req.file) {
+        console.log(req.file.path);
+        await fs.unlink(req.file.path).catch(() => {
+        });
+      }
       console.error(error);
-      res.status(500).json({error: 'internal Server Error'});
+      errorResponse(res, 'Internal Server Error', 500);
     }
   }
 }

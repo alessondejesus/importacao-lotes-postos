@@ -4,27 +4,27 @@ import {ImportGasStationResponseType} from "../../types/import-gas-station-respo
 
 export class ImportGasStationService {
   private readonly COLUMNS = [
-    'cnpj',
-    'nome_posto',
-    'nome_fantasia',
-    'bandeira',
-    'logradouro',
-    'numero',
-    'complemento',
-    'bairro',
-    'municipio',
-    'uf',
-    'cep',
-    'cpf_responsavel',
-    'nome_responsavel',
-    'email_responsavel',
-    'cargo_responsavel',
-    'combustiveis',
-    'status',
-    'data_inauguracao',
-    'numero_bicos',
-    'numero_pistas',
-    'observacoes',
+    {name: 'cnpj', required: true},
+    {name: 'nome_posto', required: true},
+    {name: 'nome_fantasia', required: true},
+    {name: 'bandeira', required: true},
+    {name: 'logradouro', required: true},
+    {name: 'numero', required: true},
+    {name: 'complemento', required: false},
+    {name: 'bairro', required: true},
+    {name: 'municipio', required: true},
+    {name: 'uf', required: true},
+    {name: 'cep', required: true},
+    {name: 'cpf_responsavel', required: true},
+    {name: 'nome_responsavel', required: true},
+    {name: 'email_responsavel', required: true},
+    {name: 'cargo_responsavel', required: true},
+    {name: 'combustiveis', required: true},
+    {name: 'status', required: true},
+    {name: 'data_inauguracao', required: true},
+    {name: 'numero_bicos', required: true},
+    {name: 'numero_pistas', required: true},
+    {name: 'observacoes', required: false},
   ];
 
   async execute(filePath: string): Promise<ImportGasStationResponseType> {
@@ -48,20 +48,20 @@ export class ImportGasStationService {
 
         if (!headersValidated) {
           const headers = Object.keys(row);
-          const missing = this.COLUMNS.filter(col => !headers.includes(col));
+          const missing = this.COLUMNS.filter(col => !headers.includes(col.name));
           if (missing.length > 0) {
-            errors.push(`erro nos cabeçalhos: colunas obrigatórias ausentes: ${missing.join(', ')}`);
+            errors.push(`erro nos cabeçalhos: colunas obrigatórias ausentes: ${missing.map(m => m.name).join(', ')}`);
             parser.destroy();
             return;
           }
           headersValidated = true;
         }
 
-        //TODO: adicionar validacoes required aqui obs: desenvolver a validacao de formato de campos
         const rowErrors: string[] = [];
         for (const col of this.COLUMNS) {
-          if (!row[col]) {
-            rowErrors.push(`coluna ${col} vazia`);
+          const value = row[col.name];
+          if (col.required && (value === null || value === undefined || value === '')) {
+            rowErrors.push(`coluna ${col.name} vazia`);
           }
         }
 
@@ -73,6 +73,8 @@ export class ImportGasStationService {
       });
 
       parser.on('error', (error) => {
+        fs.unlink(filePath, () => {
+        });
         reject(error);
       });
 
