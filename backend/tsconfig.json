@@ -10,10 +10,10 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "target": "esnext",
-    "types": [],
+//    "types": [],
     // For nodejs:
     // "lib": ["esnext"],
-    // "types": ["node"],
+     "types": ["node"],
     // and npm install -D @types/node
 
     // Other Outputs
@@ -48,8 +48,8 @@
     "resolveJsonModule": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist"],
-    "allowSyntheticDefaultImports": true,
-  }
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
