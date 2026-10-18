@@ -23,7 +23,7 @@ export class GasStationController {
         });
       }
       console.error(error);
-      errorResponse(res, 'Internal Server Error', 500);
+      errorResponse(res, 'não foi possível processar a planilha. Verifique os dados e tente novamente. Se persistir, contate o administrador.', 500);
     }
   }
 }

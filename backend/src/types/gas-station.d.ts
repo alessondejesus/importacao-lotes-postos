@@ -1,13 +1,13 @@
 import {GasStationFuelTypeEnum} from "../enums/gas-station-fuel-type-enum";
 import {GasStationStatusEnum} from "../enums/gas-station-status-enum";
 
-export interface GasStation {
+export interface GasStationType {
   cnpj: string;
   name: string;
-  tradeName: string;
+  tradeName?: string;
   brand: string;
   street: string;
-  number: string;
+  number?: string;
   complement?: string;
   neighborhood: string;
   city: string;
@@ -15,12 +15,12 @@ export interface GasStation {
   zipCode: string;
   responsibleCpf: string;
   responsibleName: string;
-  responsibleEmail: string;
-  responsiblePosition: string;
+  responsibleEmail?: string;
+  responsiblePosition?: string;
   fuels: GasStationFuelTypeEnum[];
   status: GasStationStatusEnum;
-  foundingDate: string;
-  pumpCount: number;
-  laneCount: number;
+  foundingDate?: string | null;
+  pumpCount?: number;
+  laneCount?: number;
   observations?: string;
 }

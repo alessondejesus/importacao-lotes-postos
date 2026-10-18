@@ -16,7 +16,7 @@ CREATE TYPE gas_station_fuel_type AS ENUM (
 
 CREATE TABLE IF NOT EXISTS gas_stations (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    cnpj VARCHAR(150) NOT NULL UNIQUE,
+    cnpj VARCHAR(14) NOT NULL UNIQUE,
     name VARCHAR(150) NOT NULL,
     trade_name VARCHAR(150) NOT NULL,
     brand VARCHAR(150) NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS gas_stations (
     city VARCHAR(150) NOT NULL,
     state VARCHAR(2) NOT NULL,
     zip_code VARCHAR(150) NOT NULL,
-    responsible_cpf VARCHAR(150) NOT NULL,
+    responsible_cpf VARCHAR(11) NOT NULL,
     responsible_name VARCHAR(150) NOT NULL,
     responsible_email VARCHAR(150) NOT NULL,
     responsible_position VARCHAR(150) NOT NULL,
