@@ -6,8 +6,8 @@ import {GasStationType} from "../../types/gas-station";
 import {GasStationRepository} from "../../repositories/gas-station.repository";
 import {parseFuelType} from "../../enums/gas-station-fuel-type-enum";
 import {parseStatus} from "../../enums/gas-station-status-enum";
-import {stationGasStationImportCSVColumns} from "../../constants/gas-station.-constant";
-import {formatDate} from "../../utils /format-date-util";
+import {gasStationImportCSVColumns} from "../../constants/gas-station-constant";
+import {formatDate} from "../../utils/format-date-util";
 
 export class ImportGasStationService {
   private readonly repository: GasStationRepository;
@@ -16,7 +16,7 @@ export class ImportGasStationService {
     this.repository = new GasStationRepository();
   }
 
-  private readonly COLUMNS = stationGasStationImportCSVColumns;
+  private readonly COLUMNS = gasStationImportCSVColumns;
 
   async execute(filePath: string): Promise<ImportGasStationResponseType> {
     const errors: string[] = [];
@@ -29,7 +29,7 @@ export class ImportGasStationService {
     return new Promise((resolve, reject) => {
       const parser = fs.createReadStream(filePath).pipe(
         parse({
-          delimiter: ';', // TODO: teste local com ',' por conta do metodo exportacao Google Sheet, testes feito com csv de 252313 linhas, alterar pra ';' em prod
+          delimiter: ';',
           columns: true,
           skip_empty_lines: true,
           trim: true,

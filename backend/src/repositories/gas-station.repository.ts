@@ -1,7 +1,8 @@
 import {PoolClient} from 'pg';
+import QueryStream from 'pg-query-stream';
 import {db} from '../database/connection';
 import {GasStationType} from '../types/gas-station';
-import {stationGasStationTableColumns} from "../constants/gas-station.-constant";
+import {stationGasStationTableColumns} from "../constants/gas-station-constant";
 
 export class GasStationRepository {
   private readonly BATCH_SIZE = 500;
@@ -98,5 +99,48 @@ export class GasStationRepository {
         await client.query(fuelQuery, fuelValues);
       }
     }
+  }
+
+  async getGasStationsStream(): Promise<{ stream: QueryStream; release: () => void; client: PoolClient }> {
+    const client = await db.connect();
+    const query = `
+        SELECT
+            gs.cnpj,
+            gs.name,
+            gs.trade_name,
+            gs.brand,
+            gs.street,
+            gs.number,
+            gs.complement,
+            gs.neighborhood,
+            gs.city,
+            gs.state,
+            gs.zip_code,
+            gs.responsible_cpf,
+            gs.responsible_name,
+            gs.responsible_email,
+            gs.responsible_position,
+            gs.status,
+            gs.founding_date,
+            gs.pump_count,
+            gs.lane_count,
+            gs.observations,
+            COALESCE(
+                STRING_AGG(gsf.fuel_type::TEXT, ',' ORDER BY gsf.fuel_type),
+                ''
+            ) AS fuels
+        FROM gas_stations gs
+        LEFT JOIN gas_station_fuels gsf ON gs.id = gsf.gas_station_id
+        GROUP BY gs.id
+        ORDER BY gs.id ASC
+    `;
+    const stream = new QueryStream(query);
+    const queryStream = client.query(stream);
+
+    return {
+      stream: queryStream,
+      release: () => client.release(),
+      client
+    };
   }
 }

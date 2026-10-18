@@ -13,7 +13,7 @@ export const stationGasStationTableColumns = [
   'status', 'founding_date', 'pump_count', 'lane_count', 'observations'
 ] as const;
 
-export const stationGasStationImportCSVColumns = [
+export const gasStationImportCSVColumns = [
   {name: 'cnpj', required: true, validate: isValidCNPJ},
   {name: 'nome_posto', required: true, maxLength: 150},
   {name: 'nome_fantasia', required: true, maxLength: 150},
@@ -36,3 +36,10 @@ export const stationGasStationImportCSVColumns = [
   {name: 'numero_pistas', required: true},
   {name: 'observacoes', required: false},
 ]
+
+export const gasStationExportCSVColumnsNames = [
+  'cnpj', 'nome_posto', 'nome_fantasia', 'bandeira', 'logradouro', 'numero',
+  'complemento', 'bairro', 'municipio', 'uf', 'cep', 'cpf_responsavel',
+  'nome_responsavel', 'email_responsavel', 'cargo_responsavel', 'combustiveis',
+  'status', 'data_inauguracao', 'numero_bicos', 'numero_pistas', 'observacoes'
+];
