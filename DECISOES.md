@@ -13,6 +13,7 @@ Neste documento, detalho as escolhas técnicas e arquiteturais que tomei durante
     - **Repository:** Responsável exclusivamente pela comunicação com o banco de dados.
 - **Tipagem e Utilitários:** Usei Interfaces para padronizar as interfaces de entrada e saída. Os utilitários (utils) e validadores ajudam a manter o código limpo (KISS) e evitar repetição (DRY).
 - **Testes:** Implementei testes unitários com Jest para cobrir as funções de utilitários e validadores, garantindo a confiabilidade das regras de negócio básicas.
+- Configurar o **CORS:** Configurar e testar para aceitar apenas conexões da whitelist
 
 ### Validações
 - **Documentos:** Implementei validação matemática real para CNPJ e CPF.
