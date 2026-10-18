@@ -143,4 +143,75 @@ export class GasStationRepository {
       client
     };
   }
+
+  async list(params: {
+    limit: number;
+    lastId?: number | undefined;
+    search?: string | undefined;
+  }): Promise<any[]> {
+    const {limit, lastId, search} = params;
+    const values: any[] = [limit];
+    let query = `
+        SELECT
+            gs.id,
+            gs.cnpj,
+            gs.name,
+            gs.trade_name,
+            gs.brand,
+            gs.street,
+            gs.number,
+            gs.complement,
+            gs.neighborhood,
+            gs.city,
+            gs.state,
+            gs.zip_code,
+            gs.responsible_cpf,
+            gs.responsible_name,
+            gs.responsible_email,
+            gs.responsible_position,
+            gs.status,
+            gs.founding_date,
+            gs.pump_count,
+            gs.lane_count,
+            gs.observations,
+            COALESCE(
+                STRING_AGG(gsf.fuel_type::TEXT, ',' ORDER BY gsf.fuel_type),
+                ''
+            ) AS fuels
+        FROM gas_stations gs
+        LEFT JOIN gas_station_fuels gsf ON gs.id = gsf.gas_station_id
+        WHERE 1=1
+    `;
+
+    if (lastId) {
+      values.push(lastId);
+      query += ` AND gs.id > $${values.length}`;
+    }
+
+    if (search) {
+      const cleanSearch = search.replace(/\D/g, '');
+      values.push(`%${search}%`);
+      const searchIndex = values.length;
+
+      if (cleanSearch && cleanSearch.length > 0) {
+        values.push(`%${cleanSearch}%`);
+        const cleanSearchIndex = values.length;
+        query += ` AND (gs.cnpj LIKE $${cleanSearchIndex} OR gs.trade_name ILIKE $${searchIndex})`;
+      } else {
+        query += ` AND gs.name ILIKE $${searchIndex}`;
+      }
+    }
+
+    query += `
+        GROUP BY gs.id
+        ORDER BY gs.id ASC
+        LIMIT $1
+    `;
+
+    const result = await db.query(query, values);
+    return result.rows.map(row => ({
+      ...row,
+      fuels: row.fuels ? row.fuels.split(',') : []
+    }));
+  }
 }

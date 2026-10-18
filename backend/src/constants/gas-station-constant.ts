@@ -14,7 +14,7 @@ export const stationGasStationTableColumns = [
 ] as const;
 
 export const gasStationImportCSVColumns = [
-  {name: 'cnpj', required: true, validate: isValidCNPJ},
+  {name: 'cnpj', required: true, validate: isValidCNPJ, maxLength: 18},
   {name: 'nome_posto', required: true, maxLength: 150},
   {name: 'nome_fantasia', required: true, maxLength: 150},
   {name: 'bandeira', required: true, maxLength: 150},
@@ -24,17 +24,17 @@ export const gasStationImportCSVColumns = [
   {name: 'bairro', required: true, maxLength: 150},
   {name: 'municipio', required: true, maxLength: 150},
   {name: 'uf', required: true, maxLength: 2},
-  {name: 'cep', required: true, validate: isValidCEP},
+  {name: 'cep', required: true, validate: isValidCEP, maxLength: 10},
   {name: 'cpf_responsavel', required: true, validate: isValidCPF},
   {name: 'nome_responsavel', required: true, maxLength: 150},
-  {name: 'email_responsavel', required: true, validate: isValidEmail},
+  {name: 'email_responsavel', required: true, validate: isValidEmail, maxLength: 150},
   {name: 'cargo_responsavel', required: true, maxLength: 150},
-  {name: 'combustiveis', required: true, validate: isValidFuelList},
+  {name: 'combustiveis', required: true, validate: isValidFuelList, maxLength: 2000},
   {name: 'status', required: true, validate: isValidGasStationStatus},
   {name: 'data_inauguracao', required: true, validate: isValidDate},
-  {name: 'numero_bicos', required: true},
-  {name: 'numero_pistas', required: true},
-  {name: 'observacoes', required: false},
+  {name: 'numero_bicos', required: true, maxLength: 100},
+  {name: 'numero_pistas', required: true, maxLength: 100},
+  {name: 'observacoes', required: false, maxLength: 2000},
 ]
 
 export const gasStationExportCSVColumnsNames = [

@@ -1,13 +1,31 @@
 import {Request, Response} from 'express';
 import {ImportGasStationService} from "../services/gas-station/import-gas-station.service";
 import {ExportGasStationService} from "../services/gas-station/export-gas-station.service";
+import {ListGasStationService} from "../services/gas-station/list-gas-station.service";
 import {successResponse, errorResponse} from "../utils/api-response-util";
 import fs from 'fs/promises';
 
 const importGasStationService = new ImportGasStationService();
 const exportGasStationService = new ExportGasStationService();
+const listGasStationService = new ListGasStationService();
 
 export class GasStationController {
+  async list(req: Request, res: Response): Promise<void> {
+    try {
+      const {lastId, search} = req.query;
+
+      const result = await listGasStationService.execute({
+        lastId: lastId ? Number(lastId) : undefined,
+        search: search ? String(search) : undefined,
+      });
+
+      successResponse(res, 'postos listados com sucesso', result);
+    } catch (error) {
+      console.error(error);
+      errorResponse(res, 'não foi possível listar os postos de combustível.', 500);
+    }
+  }
+
   async import(req: Request, res: Response): Promise<void> {
     try {
       const result = await importGasStationService.execute(req.file!.path);
