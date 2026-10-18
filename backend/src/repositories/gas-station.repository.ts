@@ -198,7 +198,7 @@ export class GasStationRepository {
         const cleanSearchIndex = values.length;
         query += ` AND (gs.cnpj LIKE $${cleanSearchIndex} OR gs.trade_name ILIKE $${searchIndex})`;
       } else {
-        query += ` AND gs.trade_name ILIKE $${searchIndex}`;
+        query += ` AND gs.name ILIKE $${searchIndex}`;
       }
     }
 

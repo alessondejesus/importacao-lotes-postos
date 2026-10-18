@@ -11,7 +11,7 @@ export class ListGasStationService {
     lastId?: number | undefined;
     search?: string | undefined;
   }) {
-    const limit = 100;
+    const limit = 10;
     const gasStations = await this.repository.list({
       limit,
       lastId: params.lastId,
