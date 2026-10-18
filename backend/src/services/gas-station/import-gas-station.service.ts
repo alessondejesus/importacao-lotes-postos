@@ -29,7 +29,7 @@ export class ImportGasStationService {
     return new Promise((resolve, reject) => {
       const parser = fs.createReadStream(filePath).pipe(
         parse({
-          delimiter: ',', // TODO: teste local com ',' por conta do metodo exportacao Google Sheet, testes feito com csv de 252313 linhas, alterar pra ';' em prod
+          delimiter: ';', // TODO: teste local com ',' por conta do metodo exportacao Google Sheet, testes feito com csv de 252313 linhas, alterar pra ';' em prod
           columns: true,
           skip_empty_lines: true,
           trim: true,
