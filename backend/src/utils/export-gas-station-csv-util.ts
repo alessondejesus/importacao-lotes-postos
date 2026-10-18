@@ -52,9 +52,9 @@ export function formatFuels(fuelsStr: any): string {
 export function formatStatus(status: any): string {
   if (status === null || status === undefined) return '';
   const mapping: Record<string, string> = {
-    [GasStationStatusEnum.ACTIVE]: 'Ativo',
-    [GasStationStatusEnum.INACTIVE]: 'Inativo',
-    [GasStationStatusEnum.UNDER_IMPLEMENTATION]: 'Em Implantação',
+    [GasStationStatusEnum.ACTIVE]: 'ativo',
+    [GasStationStatusEnum.INACTIVE]: 'inativo',
+    [GasStationStatusEnum.UNDER_IMPLEMENTATION]: 'em_implantacao',
   };
   return escapeCSV(mapping[status as GasStationStatusEnum] || status);
 }
