@@ -4,13 +4,13 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydatabase
+      POSTGRES_DB: gasstation
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d mydatabase"]
+      test: ["CMD-SHELL", "pg_isready -U user -d gasstation"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -24,7 +24,7 @@ services:
       DB_PORT: 5432
       DB_USERNAME: user
       DB_PASSWORD: password
-      DB_DATABASE: mydatabase
+      DB_DATABASE: gasstation
       NODE_ENV: development
     depends_on:
       db:
