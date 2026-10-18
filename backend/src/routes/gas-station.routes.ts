@@ -8,6 +8,11 @@ const upload = multer({dest: os.tmpdir()});
 const router = Router();
 const gasStationController = new GasStationController();
 
+router.get(
+  '/',
+  (req, res) => gasStationController.list(req, res)
+);
+
 router.post(
   '/import',
   upload.single('file'),
