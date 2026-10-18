@@ -34,6 +34,16 @@
 			</div>
 		</div>
 
+		<v-text-field
+			v-model="search"
+			prepend-inner-icon="mdi-magnify"
+			label="Buscar por CNPJ ou nome do posto"
+			variant="outlined"
+			hide-details
+			clearable
+			class="mb-6"
+		/>
+
 		<v-card rounded="lg" variant="outlined">
 			<v-table hover>
 				<thead>
@@ -126,7 +136,7 @@
 </template>
 
 <script setup lang="ts">
-	import {onMounted, ref} from 'vue'
+	import {onMounted, ref, watch} from 'vue'
 	import GasStationImportDialog from "@/components/GasStationImportDialog.vue";
 	import GasStationPagination from "@/components/GasStationPagination.vue";
 	import GasStationDetailDialog from "@/components/GasStationDetailDialog.vue";
@@ -168,6 +178,8 @@
 
 	const hasMore = ref(false)
 	const paginationStack = ref<string[]>([])
+	const search = ref('')
+	let debounceTimer: ReturnType<typeof setTimeout>
 
 	const notification = ref({
 		show: false,
@@ -190,6 +202,7 @@
 	}
 
 	function onImportSuccess() {
+		search.value = ''
 		paginationStack.value = []
 		loadGasStations()
 		notify('Importação concluída com sucesso!')
@@ -215,6 +228,9 @@
 			const url = new URL(`${API_URL}/gas-stations`)
 			if (lastId) {
 				url.searchParams.append('lastId', lastId)
+			}
+			if (search.value) {
+				url.searchParams.append('search', search.value)
 			}
 
 			const response = await fetch(url.toString())
@@ -260,6 +276,14 @@
 		loadGasStations(prevId)
 	}
 
+
+	watch(search, () => {
+		clearTimeout(debounceTimer)
+		debounceTimer = setTimeout(() => {
+			paginationStack.value = []
+			loadGasStations()
+		}, 500)
+	})
 
 	async function exportGasStations() {
 		if (exportLoading.value) return
