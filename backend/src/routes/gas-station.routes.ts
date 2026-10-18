@@ -15,4 +15,9 @@ router.post(
   (req, res) => gasStationController.import(req, res)
 );
 
+router.get(
+  '/export',
+  (req, res) => gasStationController.export(req, res)
+);
+
 export default router;
