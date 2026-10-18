@@ -117,7 +117,7 @@
 
 					<p>
 						<v-icon color="primary" class="mr-2">mdi-ruler-outline</v-icon>
-						Fique atento ao limite de caracteres dos campos para evitar truncamento.
+						Fique atento ao limite de caracteres dos campos.
 					</p>
 				</div>
 			</v-card-text>
