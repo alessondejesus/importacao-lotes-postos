@@ -13,6 +13,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "cors": "^2.8.6",
     "csv-parse": "^7.0.3",
     "date-fns": "^4.4.0",
     "dotenv": "^18.0.8",
@@ -22,6 +23,7 @@
     "pg-query-stream": "^4.17.1"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
