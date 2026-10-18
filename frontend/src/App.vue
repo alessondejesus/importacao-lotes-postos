@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <HelloWorld />
+      <GasStationList />
       <v-btn
         class="m-2"
         icon="mdi-theme-light-dark"
@@ -14,5 +14,5 @@
 </template>
 
 <script lang="ts" setup>
-  import HelloWorld from '@/components/HelloWorld.vue'
+  import GasStationList from "@/components/GasStationList.vue";
 </script>
